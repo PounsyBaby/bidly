@@ -44,7 +44,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
       return;
     }
 
+    // Timeout de 5 secondes pour ne pas bloquer indéfiniment
+    const timeoutId = setTimeout(() => {
+      setAuthLoading(false);
+    }, 5000);
+
     supabase.auth.getSession().then(async ({ data }) => {
+      clearTimeout(timeoutId);
       setSession(data.session);
 
       if (data.session?.user) {
@@ -57,6 +63,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
 
       setAuthLoading(false);
+    }).catch(() => {
+      clearTimeout(timeoutId);
+      setAuthLoading(false);
     });
 
     const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
@@ -67,6 +76,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     });
 
     return () => {
+      clearTimeout(timeoutId);
       data.subscription.unsubscribe();
     };
   }, []);
