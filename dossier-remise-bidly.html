@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dossier de remise - Bidly</title>
+    <style>
+      @page {
+        margin: 22mm;
+      }
+
+      body {
+        color: #111827;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        color: #0f766e;
+        font-size: 30px;
+      }
+
+      h2 {
+        margin: 26px 0 10px;
+        border-bottom: 1px solid #d1d5db;
+        padding-bottom: 5px;
+        color: #0f766e;
+        font-size: 18px;
+      }
+
+      h3 {
+        margin: 16px 0 6px;
+        font-size: 14px;
+      }
+
+      p {
+        margin: 0 0 9px;
+      }
+
+      ul,
+      ol {
+        margin: 6px 0 10px 20px;
+        padding: 0;
+      }
+
+      li {
+        margin: 3px 0;
+      }
+
+      table {
+        width: 100%;
+        margin-top: 10px;
+        border-collapse: collapse;
+        page-break-inside: avoid;
+      }
+
+      th,
+      td {
+        border: 1px solid #d1d5db;
+        padding: 7px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #ecfdf5;
+        color: #064e3b;
+      }
+
+      code {
+        font-family: Menlo, Consolas, monospace;
+        font-size: 11px;
+      }
+
+      .cover {
+        margin-bottom: 28px;
+        padding: 26px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #f8fafc;
+      }
+
+      .meta {
+        color: #4b5563;
+        font-size: 13px;
+      }
+
+      .note {
+        padding: 10px 12px;
+        border-left: 4px solid #0f766e;
+        background: #f0fdfa;
+      }
+
+      .page {
+        break-before: page;
+        page-break-before: always;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="cover">
+      <h1>Bidly</h1>
+      <p class="meta">Dossier de remise - Projet React Native</p>
+      <p class="meta">Application mobile d'enchères simples</p>
+      <p class="meta">Étudiant : Thomas Paquet</p>
+    </section>
+
+    <h2>1. Rappel du sujet</h2>
+    <p>
+      Bidly est une application mobile d'enchères simples développée avec React
+      Native. Elle permet à un utilisateur de consulter des objets mis aux
+      enchères, de rechercher un objet par mot-clé, de consulter le détail d'une
+      enchère, de placer une offre, de suivre les enchères auxquelles il
+      participe et d'être notifié lorsqu'un autre utilisateur surenchérit.
+    </p>
+    <p>
+      L'application est pensée comme un prototype scolaire réaliste. Elle montre
+      le fonctionnement principal d'un système d'enchères, mais elle ne cherche
+      pas à devenir une marketplace complète. Les paiements, la livraison, les
+      litiges, les évaluations de vendeurs et la messagerie ne sont pas gérés.
+    </p>
+    <p>
+      Le projet met l'accent sur un parcours clair : un utilisateur peut créer
+      un compte, consulter les enchères disponibles, créer sa propre vente,
+      enchérir sur une vente d'un autre utilisateur, suivre ses offres et
+      recevoir une notification interne lorsqu'il est dépassé.
+    </p>
+
+    <h2>2. Objectifs fonctionnels</h2>
+    <p>
+      Le premier objectif est de proposer une liste d'enchères lisible. Chaque
+      enchère doit afficher les informations utiles pour décider si l'utilisateur
+      veut ouvrir le détail : titre, image si disponible, prix actuel, vendeur et
+      statut.
+    </p>
+    <p>
+      Le deuxième objectif est de permettre la recherche par mot-clé. La
+      recherche reste simple et filtre les enchères visibles selon le texte saisi
+      par l'utilisateur.
+    </p>
+    <p>
+      Le troisième objectif est de permettre le placement d'une offre. Le montant
+      doit être un nombre valide, supérieur au prix actuel, et l'enchère doit
+      encore être active. Un utilisateur ne peut pas enchérir sur sa propre
+      vente.
+    </p>
+    <p>
+      Le quatrième objectif est de suivre les enchères auxquelles l'utilisateur a
+      participé. L'écran Mes offres permet de voir son dernier montant, le prix
+      actuel et si l'utilisateur est encore en tête.
+    </p>
+    <p>
+      Le cinquième objectif est de notifier un utilisateur lorsqu'un autre
+      compte place une offre plus élevée que la sienne. La notification est
+      interne à l'application afin de rester simple et fiable pour le projet.
+    </p>
+
+    <h2 class="page">3. Fonctionnalités implémentées</h2>
+    <p>Les fonctionnalités présentes dans la version remise sont les suivantes.</p>
+    <ul>
+      <li>Affichage d'une liste d'enchères actives.</li>
+      <li>Recherche par mot-clé sur les enchères affichées.</li>
+      <li>Écran de détail pour consulter les informations d'une enchère.</li>
+      <li>Inscription et connexion avec email et mot de passe via Supabase Auth.</li>
+      <li>Affichage du nom de l'utilisateur connecté plutôt que son adresse email.</li>
+      <li>Création d'une enchère par un utilisateur connecté.</li>
+      <li>Ajout d'une image à une enchère via une URL ou le choix d'une image depuis l'appareil.</li>
+      <li>Suppression d'une vente par son vendeur.</li>
+      <li>Placement d'une offre sur une enchère active.</li>
+      <li>Validation des offres trop basses, invalides ou placées après la fin de l'enchère.</li>
+      <li>Blocage des offres sur sa propre vente.</li>
+      <li>Historique des dernières offres sur le détail d'une enchère.</li>
+      <li>Écran Mes offres pour suivre les enchères auxquelles l'utilisateur participe.</li>
+      <li>Notifications internes lorsqu'un autre utilisateur surenchérit.</li>
+      <li>Badge visuel indiquant le nombre de notifications non lues.</li>
+      <li>Marquage des notifications comme lues.</li>
+      <li>États de chargement, d'erreur et de liste vide.</li>
+    </ul>
+    <p>
+      La version finale utilise Supabase comme source de données unique. Il n'y a
+      pas de jeu de données local de secours : si Supabase n'est pas configuré ou
+      indisponible, l'application affiche une erreur plutôt que de montrer de
+      fausses données.
+    </p>
+
+    <h2 class="page">4. Authentification et profil</h2>
+    <p>
+      L'authentification est gérée par Supabase Auth. L'utilisateur peut créer un
+      compte avec un nom, une adresse email et un mot de passe. Après la
+      connexion, l'application conserve l'utilisateur courant dans un contexte
+      React afin que les écrans sachent si une action nécessite une session
+      active.
+    </p>
+    <p>
+      Le nom affiché est stocké dans la table <code>profiles</code>. Cette table
+      est liée à l'utilisateur Supabase Auth par son identifiant. Elle permet
+      d'afficher un nom lisible dans l'interface, par exemple "Thomas", au lieu
+      de montrer l'adresse email complète.
+    </p>
+    <p>
+      Un déclencheur SQL crée automatiquement une ligne de profil lorsqu'un
+      nouvel utilisateur est ajouté dans <code>auth.users</code>. Le service
+      d'authentification vérifie aussi que le profil existe après connexion, ce
+      qui évite d'avoir une interface sans nom si une ligne manque.
+    </p>
+    <p>
+      Le choix d'un compte utilisateur est important pour Bidly : il permet de
+      savoir qui vend un objet, qui place une offre, qui est le meilleur
+      enchérisseur et qui doit recevoir une notification de surenchère.
+    </p>
+
+    <h2 class="page">5. Création et gestion des ventes</h2>
+    <p>
+      La création d'une vente se fait dans l'écran dédié. Le formulaire reste
+      volontairement simple : titre, description, prix de départ, date de fin et
+      image optionnelle. Ces champs suffisent pour présenter une enchère complète
+      sans ajouter des notions hors périmètre comme la livraison ou le paiement.
+    </p>
+    <p>
+      L'image peut être fournie de deux manières. L'utilisateur peut coller une
+      URL d'image, ou choisir une image depuis son appareil. L'application
+      prépare ensuite cette valeur pour l'afficher avec le composant
+      <code>Image</code> de React Native.
+    </p>
+    <p>
+      Lorsqu'une vente est créée, elle est associée à l'utilisateur connecté avec
+      <code>seller_id</code> et <code>seller_name</code>. Cette information est
+      utilisée pour afficher le vendeur, empêcher le vendeur d'enchérir sur sa
+      propre vente et autoriser la suppression uniquement par le vendeur.
+    </p>
+    <p>
+      La suppression d'une vente est disponible sur l'écran de détail pour le
+      vendeur. Elle repose aussi sur une règle Row Level Security côté Supabase,
+      afin qu'un utilisateur ne puisse pas supprimer une vente qui ne lui
+      appartient pas.
+    </p>
+
+    <h2 class="page">6. Placement d'une offre</h2>
+    <p>
+      Le placement d'une offre est la règle métier principale du projet. Le code
+      vérifie les erreurs évidentes côté interface pour donner un retour rapide :
+      montant vide, montant non numérique, montant trop faible, utilisateur non
+      connecté, enchère terminée ou vente appartenant à l'utilisateur courant.
+    </p>
+    <p>
+      La validation finale est réalisée côté Supabase avec la fonction SQL
+      <code>place_bid</code>. Cette fonction relit l'état actuel de l'enchère
+      avant d'accepter l'offre. Cela évite de se baser uniquement sur une donnée
+      affichée dans l'application, qui pourrait être dépassée si un autre
+      utilisateur a surenchéri entre-temps.
+    </p>
+    <p>La fonction vérifie notamment les règles suivantes.</p>
+    <ul>
+      <li>l'utilisateur doit être connecté ;</li>
+      <li>l'enchère doit exister ;</li>
+      <li>l'enchère doit être active ;</li>
+      <li>la date de fin ne doit pas être dépassée ;</li>
+      <li>l'utilisateur ne doit pas être le vendeur ;</li>
+      <li>le montant doit être supérieur au prix actuel ;</li>
+      <li>la première offre doit respecter le prix de départ.</li>
+    </ul>
+    <p>
+      Si toutes les vérifications réussissent, la fonction insère la nouvelle
+      offre dans <code>bids</code>, met à jour le prix actuel dans
+      <code>auction_items</code> et enregistre le meilleur enchérisseur.
+    </p>
+
+    <h2 class="page">7. Notifications et suivi</h2>
+    <p>
+      Les notifications sont internes à l'application. Elles sont stockées dans
+      la table <code>notifications</code> avec l'utilisateur concerné, l'enchère,
+      le message, l'état lu/non lu et la date de création.
+    </p>
+    <p>
+      Une notification est créée uniquement lorsqu'un utilisateur différent
+      dépasse l'ancien meilleur enchérisseur. Si personne n'avait encore enchéri,
+      aucune notification n'est nécessaire. Si un utilisateur augmente lui-même
+      son offre, l'application ne crée pas de notification de surenchère pour lui.
+    </p>
+    <p>
+      L'écran Notifications affiche les messages reçus par l'utilisateur
+      connecté. Le badge dans la navigation indique le nombre de notifications
+      non lues, ce qui donne un retour visuel immédiat.
+    </p>
+    <p>
+      L'écran Mes offres complète ce système. Il regroupe les enchères sur
+      lesquelles l'utilisateur a déjà placé une offre et indique si son offre est
+      encore la meilleure. Cela permet de suivre facilement les enchères
+      importantes sans devoir parcourir toute la liste.
+    </p>
+
+    <h2 class="page">8. Base de données Supabase</h2>
+    <p>
+      Le schéma SQL est défini dans <code>supabase/schema.sql</code>. Il crée les
+      tables nécessaires au fonctionnement de Bidly : <code>profiles</code>,
+      <code>auction_items</code>, <code>bids</code> et
+      <code>notifications</code>.
+    </p>
+    <p>
+      La table <code>profiles</code> contient le nom public de l'utilisateur. La
+      table <code>auction_items</code> contient les informations des ventes :
+      titre, description, image, prix de départ, prix actuel, vendeur, meilleur
+      enchérisseur, date de fin et statut.
+    </p>
+    <p>
+      La table <code>bids</code> contient l'historique des offres. Chaque ligne
+      relie un utilisateur à une enchère avec un montant et une date. Cet
+      historique permet d'afficher les dernières offres et de retrouver les
+      enchères auxquelles un utilisateur a participé.
+    </p>
+    <p>
+      La table <code>notifications</code> contient les notifications de
+      surenchère. Elle permet de garder les messages après rechargement de
+      l'application et de distinguer les notifications lues des notifications non
+      lues.
+    </p>
+    <p>
+      Des index sont ajoutés sur les identifiants souvent utilisés, par exemple
+      les enchères liées aux offres, les vendeurs, les meilleurs enchérisseurs et
+      les notifications d'un utilisateur. Cela garde les requêtes simples et plus
+      efficaces.
+    </p>
+
+    <h2 class="page">9. Sécurité et Row Level Security</h2>
+    <p>
+      Supabase Row Level Security est activé sur les tables principales. Les
+      règles restent compréhensibles pour un projet scolaire, mais elles
+      protègent les actions importantes.
+    </p>
+    <p>
+      Les enchères actives peuvent être lues afin que la liste soit visible. Un
+      utilisateur connecté peut créer une vente avec son propre identifiant comme
+      vendeur. Un vendeur peut modifier ou supprimer uniquement ses propres
+      ventes.
+    </p>
+    <p>
+      Les offres peuvent être lues par les utilisateurs connectés et insérées par
+      l'utilisateur courant. Les notifications peuvent être lues et mises à jour
+      uniquement par leur destinataire.
+    </p>
+    <p>
+      La clé utilisée côté application est la clé publique
+      <code>anon</code>. Aucune clé service role n'est placée dans le code
+      client. Les valeurs Supabase sont lues depuis les variables
+      d'environnement <code>EXPO_PUBLIC_SUPABASE_URL</code> et
+      <code>EXPO_PUBLIC_SUPABASE_ANON_KEY</code>.
+    </p>
+
+    <h2 class="page">10. Justification technique</h2>
+    <h3>React Native et Expo</h3>
+    <p>
+      React Native a été utilisé pour construire une application mobile avec une
+      base de code unique. Expo simplifie le lancement du projet, les tests avec
+      Expo Go, le mode web et l'accès à certaines fonctionnalités comme le choix
+      d'image.
+    </p>
+
+    <h3>TypeScript</h3>
+    <p>
+      TypeScript permet de décrire clairement les structures utilisées dans
+      l'application, par exemple les enchères, les offres et les notifications.
+      Cela limite les erreurs et rend le code plus facile à expliquer.
+    </p>
+
+    <h3>Supabase plutôt qu'un stockage local</h3>
+    <p>
+      Supabase a été choisi car un système d'enchères nécessite des données
+      partagées entre plusieurs utilisateurs. Deux comptes différents peuvent
+      interagir avec la même enchère, voir le prix actuel et recevoir une
+      notification après une surenchère.
+    </p>
+    <p>
+      Un stockage local serait plus simple pour un premier prototype, mais il ne
+      permettrait pas de démontrer correctement une enchère entre plusieurs
+      utilisateurs. Supabase fournit directement une base PostgreSQL,
+      l'authentification et les règles de sécurité.
+    </p>
+
+    <h3>Notifications internes</h3>
+    <p>
+      Les notifications push natives n'ont pas été ajoutées. Elles demanderaient
+      une configuration plus lourde et des identifiants de production. Pour ce
+      projet, des notifications internes suffisent à démontrer la règle métier :
+      prévenir un utilisateur lorsqu'il est dépassé.
+    </p>
+
+    <h2 class="page">11. Architecture du projet</h2>
+    <p>
+      Le projet garde une structure simple pour rester compréhensible pendant une
+      défense orale. Les écrans ne contiennent pas directement toute la logique
+      de base de données : les appels Supabase sont isolés dans des services.
+    </p>
+    <ul>
+      <li><code>app/</code> contient les écrans et la navigation Expo Router.</li>
+      <li><code>components/</code> contient les composants réutilisables comme les cartes d'enchères.</li>
+      <li><code>context/</code> contient les contextes React pour l'authentification et les enchères.</li>
+      <li><code>services/</code> contient les appels à Supabase et la logique d'accès aux données.</li>
+      <li><code>supabase/</code> contient le schéma SQL et les données de départ.</li>
+      <li><code>types/</code> contient les types TypeScript utilisés dans l'application.</li>
+      <li><code>utils/</code> contient les fonctions simples de formatage des prix, dates et statuts.</li>
+    </ul>
+    <p>
+      Le contexte d'authentification garde la session et le nom d'affichage. Le
+      contexte des enchères charge les enchères, les offres et les notifications,
+      puis expose les actions principales aux écrans.
+    </p>
+    <p>
+      Les services séparent les responsabilités : <code>auctionsService</code>
+      charge, crée et supprime les enchères ; <code>bidsService</code> place les
+      offres ; <code>notificationsService</code> gère les notifications ;
+      <code>profilesService</code> récupère le nom d'affichage.
+    </p>
+
+    <h2 class="page">12. Flux de données importants</h2>
+    <h3>Flux de création d'une enchère</h3>
+    <p>
+      L'utilisateur remplit le formulaire de création. L'écran vérifie que les
+      champs obligatoires sont présents et que le prix de départ est valide. Le
+      service crée ensuite une ligne dans <code>auction_items</code> avec le
+      vendeur connecté, le prix de départ, le prix actuel initial et la date de
+      fin.
+    </p>
+
+    <h3>Flux de placement d'une offre</h3>
+    <p>
+      L'écran de détail vérifie les erreurs simples, puis appelle le contexte. Le
+      contexte appelle <code>bidsService</code>, qui exécute
+      <code>place_bid</code> côté Supabase. La base valide l'offre, insère la
+      ligne dans <code>bids</code>, met à jour l'enchère et crée une notification
+      si un ancien meilleur enchérisseur a été dépassé.
+    </p>
+
+    <h3>Flux de suivi</h3>
+    <p>
+      Les offres de l'utilisateur sont chargées depuis Supabase. L'écran Mes
+      offres compare la dernière offre de l'utilisateur avec le meilleur
+      enchérisseur actuel pour indiquer si l'utilisateur est en tête ou non.
+    </p>
+
+    <h3>Rafraîchissement des données</h3>
+    <p>
+      L'application recharge les données régulièrement afin que deux appareils
+      connectés voient les nouveaux prix sans devoir relancer l'application. Ce
+      choix reste plus simple qu'une architecture temps réel complète et suffit
+      pour la démonstration.
+    </p>
+
+    <h2 class="page">13. Interface et expérience utilisateur</h2>
+    <p>
+      L'interface reste volontairement sobre. Les boutons d'inscription, de
+      connexion et de déconnexion sont visibles et lisibles. L'utilisateur
+      connecté est identifié par son nom, ce qui donne une interface plus claire
+      qu'un affichage permanent de l'adresse email.
+    </p>
+    <p>
+      Les formulaires affichent des messages courts en cas d'erreur : champ
+      manquant, montant invalide, offre trop basse, enchère terminée ou action
+      interdite. L'objectif est que l'utilisateur comprenne immédiatement
+      pourquoi une action ne passe pas.
+    </p>
+    <p>
+      Les écrans de données prévoient des états simples : chargement, erreur et
+      absence de résultat. Cela évite les écrans vides et rend l'application plus
+      facile à présenter.
+    </p>
+    <p>
+      Les prix sont affichés en euros et les dates sont formatées dans un style
+      lisible. Ces petits utilitaires évitent de répéter le même formatage dans
+      plusieurs écrans.
+    </p>
+
+    <h2 class="page">14. Auto-évaluation</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Fonctionnalité annoncée</th>
+          <th>Réalisée ?</th>
+          <th>Commentaire</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Liste des enchères</td>
+          <td>Oui</td>
+          <td>Les enchères actives sont affichées avec leur titre, image, prix actuel et statut.</td>
+        </tr>
+        <tr>
+          <td>Recherche par mot-clé</td>
+          <td>Oui</td>
+          <td>La liste est filtrée selon le texte saisi par l'utilisateur.</td>
+        </tr>
+        <tr>
+          <td>Détail d'une enchère</td>
+          <td>Oui</td>
+          <td>L'utilisateur peut consulter le titre, la description, les prix, la date de fin, le vendeur et les dernières offres.</td>
+        </tr>
+        <tr>
+          <td>Placement d'une offre</td>
+          <td>Oui</td>
+          <td>Un utilisateur connecté peut placer une offre sur une enchère active qui n'est pas sa propre vente.</td>
+        </tr>
+        <tr>
+          <td>Validation des enchères</td>
+          <td>Oui</td>
+          <td>Les montants invalides, trop bas, les enchères terminées et les offres sur sa propre vente sont refusés.</td>
+        </tr>
+        <tr>
+          <td>Notifications de surenchère</td>
+          <td>Oui</td>
+          <td>Une notification interne est créée pour l'ancien meilleur enchérisseur lorsqu'un autre utilisateur le dépasse.</td>
+        </tr>
+        <tr>
+          <td>Suivi des enchères</td>
+          <td>Oui</td>
+          <td>L'écran Mes offres affiche les enchères auxquelles l'utilisateur a participé et indique s'il est en tête.</td>
+        </tr>
+        <tr>
+          <td>Authentification</td>
+          <td>Oui</td>
+          <td>L'inscription et la connexion utilisent Supabase Auth avec email et mot de passe.</td>
+        </tr>
+        <tr>
+          <td>Création de vente</td>
+          <td>Oui</td>
+          <td>Un utilisateur connecté peut créer une enchère avec titre, description, prix, date de fin et image optionnelle.</td>
+        </tr>
+        <tr>
+          <td>Suppression de vente</td>
+          <td>Oui</td>
+          <td>Le vendeur peut supprimer uniquement ses propres ventes, avec une règle RLS côté Supabase.</td>
+        </tr>
+        <tr>
+          <td>Gestion de la fin des enchères</td>
+          <td>Oui</td>
+          <td>Les offres sont bloquées si la date de fin est dépassée ou si le statut n'est plus actif.</td>
+        </tr>
+        <tr>
+          <td>Temps réel avancé</td>
+          <td>Partiel</td>
+          <td>L'application recharge les données régulièrement. Un système temps réel complexe n'a pas été ajouté pour garder le projet simple.</td>
+        </tr>
+        <tr>
+          <td>Paiement et livraison</td>
+          <td>Non</td>
+          <td>Ces fonctionnalités sont hors périmètre pour ce projet.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 class="page">15. Parcours de démonstration</h2>
+    <ol>
+      <li>Ouvrir l'application avec Expo Go ou la version web.</li>
+      <li>Consulter la liste des enchères.</li>
+      <li>Rechercher un objet par mot-clé.</li>
+      <li>Créer un compte ou se connecter.</li>
+      <li>Créer une nouvelle enchère avec une image.</li>
+      <li>Ouvrir sa propre vente et vérifier que le bouton d'offre est bloqué.</li>
+      <li>Se connecter avec un autre compte et placer une offre valide.</li>
+      <li>Essayer de placer une offre trop basse.</li>
+      <li>Surenchérir avec un autre utilisateur.</li>
+      <li>Vérifier la notification de surenchère.</li>
+      <li>Ouvrir Mes offres pour vérifier le suivi.</li>
+      <li>Supprimer une vente créée avec le compte vendeur.</li>
+    </ol>
+
+    <h2 class="page">16. Configuration et lancement</h2>
+    <p>
+      Le projet se lance avec Expo. Le fichier <code>.nvmrc</code> indique la
+      version de Node utilisée pour stabiliser l'environnement de développement.
+      Le lancement recommandé consiste à se placer dans le dossier du projet,
+      utiliser la version Node indiquée, installer les dépendances puis lancer
+      Expo.
+    </p>
+    <p>Les commandes principales sont les suivantes.</p>
+    <ul>
+      <li><code>nvm use</code> pour utiliser la version de Node du projet ;</li>
+      <li><code>npm install</code> pour installer les dépendances ;</li>
+      <li><code>npm start</code> pour lancer Expo Go et scanner le QR code ;</li>
+      <li><code>npm run web</code> pour ouvrir l'application dans le navigateur.</li>
+    </ul>
+    <p>
+      Les identifiants Supabase ne sont pas écrits directement dans le code. Ils
+      doivent être placés dans un fichier <code>.env</code> local avec les clés
+      <code>EXPO_PUBLIC_SUPABASE_URL</code> et
+      <code>EXPO_PUBLIC_SUPABASE_ANON_KEY</code>. Ce fichier ne doit pas être
+      envoyé sur GitHub.
+    </p>
+    <p>
+      Pour préparer une base Supabase propre, le fichier
+      <code>supabase/schema.sql</code> doit être exécuté dans l'éditeur SQL de
+      Supabase. Le fichier <code>supabase/seed.sql</code> peut ensuite être
+      exécuté pour ajouter quelques enchères de démonstration.
+    </p>
+
+    <h2 class="page">17. Vérifications manuelles</h2>
+    <p>
+      Les vérifications suivantes permettent de confirmer que le projet répond
+      aux fonctionnalités annoncées.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Parcours testé</th>
+          <th>Résultat attendu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ouvrir l'application</td>
+          <td>La liste des enchères se charge depuis Supabase.</td>
+        </tr>
+        <tr>
+          <td>Rechercher un mot-clé</td>
+          <td>La liste se filtre selon le texte saisi.</td>
+        </tr>
+        <tr>
+          <td>Créer un compte</td>
+          <td>Le profil est créé et le nom s'affiche dans l'application.</td>
+        </tr>
+        <tr>
+          <td>Créer une vente</td>
+          <td>La vente apparaît dans la liste avec son prix et son image.</td>
+        </tr>
+        <tr>
+          <td>Enchérir sur sa propre vente</td>
+          <td>L'action est bloquée.</td>
+        </tr>
+        <tr>
+          <td>Placer une offre trop basse</td>
+          <td>L'offre est refusée avec un message d'erreur clair.</td>
+        </tr>
+        <tr>
+          <td>Placer une offre valide</td>
+          <td>Le prix actuel augmente et l'offre apparaît dans l'historique.</td>
+        </tr>
+        <tr>
+          <td>Surenchérir avec un autre compte</td>
+          <td>L'ancien meilleur enchérisseur reçoit une notification interne.</td>
+        </tr>
+        <tr>
+          <td>Ouvrir Mes offres</td>
+          <td>L'utilisateur voit les enchères auxquelles il a participé.</td>
+        </tr>
+        <tr>
+          <td>Supprimer sa vente</td>
+          <td>La vente disparaît de la liste et ne peut pas être supprimée par un autre utilisateur.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 class="page">18. Données de démonstration</h2>
+    <p>
+      Le fichier <code>supabase/seed.sql</code> contient des enchères de départ
+      pour faciliter la démonstration. Ces données évitent de présenter une
+      application vide lors du premier lancement.
+    </p>
+    <p>
+      Les objets de démonstration restent volontairement simples et réalistes :
+      casque audio, montre connectée, sac à dos, clavier mécanique, jeu vidéo ou
+      appareil photo compact. Chaque enchère contient un titre, une description,
+      un prix de départ, un prix actuel, une image et une date de fin.
+    </p>
+    <p>
+      Ces données ne remplacent pas les vraies actions utilisateur. Une vente
+      créée depuis l'application est enregistrée dans la même table Supabase que
+      les données de départ, ce qui permet de montrer que l'application utilise
+      bien une source distante.
+    </p>
+
+    <h2 class="page">19. Limites connues</h2>
+    <p>
+      Le projet ne gère pas les paiements, la livraison, les litiges ou les
+      évaluations. Ces éléments sont volontairement exclus, car Bidly est un
+      prototype d'enchères simples et non une marketplace complète.
+    </p>
+    <p>
+      Les notifications sont internes à l'application. Elles ne sont pas envoyées
+      sous forme de notifications push natives lorsque l'application est fermée.
+      Ce choix évite une configuration de production plus lourde.
+    </p>
+    <p>
+      Le rafraîchissement des données reste simple. L'application recharge les
+      informations à intervalle régulier plutôt que d'utiliser une architecture
+      temps réel avancée. Cette solution est suffisante pour la démonstration et
+      plus facile à expliquer.
+    </p>
+    <p>
+      Les images choisies depuis l'appareil sont adaptées à un prototype. Une
+      version plus avancée pourrait utiliser Supabase Storage, mais cela
+      ajouterait une couche de configuration supplémentaire.
+    </p>
+
+    <h2 class="page">20. Améliorations possibles</h2>
+    <p>
+      Une première amélioration serait d'ajouter des tests automatisés sur la
+      logique d'offres : montant trop bas, enchère terminée, vendeur qui tente
+      d'enchérir, notification de l'ancien meilleur enchérisseur.
+    </p>
+    <p>
+      Une deuxième amélioration serait d'utiliser Supabase Realtime de manière
+      plus complète pour mettre à jour instantanément les prix, les offres et les
+      notifications, sans rechargement périodique.
+    </p>
+    <p>
+      Une troisième amélioration serait d'ajouter Supabase Storage pour stocker
+      proprement les images de vente au lieu de dépendre d'URL ou de données
+      intégrées.
+    </p>
+    <p>
+      Une quatrième amélioration serait d'améliorer la gestion des enchères
+      terminées avec un affichage plus détaillé du gagnant et un historique plus
+      complet.
+    </p>
+    <p>
+      Enfin, l'interface pourrait être encore améliorée avec une meilleure
+      hiérarchie visuelle, des confirmations plus détaillées et une navigation
+      plus confortable sur les petits écrans.
+    </p>
+
+    <h2>21. Conclusion</h2>
+    <p>
+      Bidly couvre les fonctionnalités principales attendues pour une application
+      mobile d'enchères simples : consulter des ventes, rechercher un objet,
+      créer une vente, placer une offre, valider les règles métier, suivre ses
+      offres et recevoir une notification lorsqu'un autre utilisateur surenchérit.
+    </p>
+    <p>
+      Le choix de Supabase est cohérent avec le besoin multi-utilisateur du
+      projet. Il permet de partager les données entre plusieurs appareils, de
+      gérer l'authentification et de sécuriser les actions importantes avec Row
+      Level Security.
+    </p>
+    <p>
+      L'architecture reste volontairement simple : écrans Expo Router, composants
+      réutilisables, contextes React, services Supabase, types TypeScript et
+      utilitaires de formatage. Cette organisation permet de comprendre le projet
+      et de le défendre clairement.
+    </p>
+  </body>
+</html>
