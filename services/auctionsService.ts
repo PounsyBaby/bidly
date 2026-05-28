@@ -94,6 +94,32 @@ export async function deleteAuctionItem(auctionItemId: string) {
     throw new Error("Supabase configuration is missing.");
   }
 
+  // Vérifier que l'utilisateur est authentifié
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  
+  if (sessionError || !sessionData.session?.user?.id) {
+    throw new Error("Vous devez être connecté pour supprimer une enchère.");
+  }
+
+  const userId = sessionData.session.user.id;
+
+  // Récupérer l'enchère pour vérifier le vendeur
+  const { data: auctionData, error: getError } = await supabase
+    .from("auction_items")
+    .select("seller_id")
+    .eq("id", auctionItemId)
+    .maybeSingle();
+
+  if (getError || !auctionData) {
+    throw new Error("Enchère non trouvée.");
+  }
+
+  // Vérifier que l'utilisateur est le vendeur
+  if (auctionData.seller_id !== userId) {
+    throw new Error("Vous pouvez seulement supprimer vos propres enchères.");
+  }
+
+  // Supprimer l'enchère
   const { data, error } = await supabase
     .from("auction_items")
     .delete()
