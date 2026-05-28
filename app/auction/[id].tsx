@@ -42,8 +42,9 @@ export default function AuctionDetailScreen() {
 
   const auction = item;
   const ended = isAuctionEnded(auction);
-  const isSeller = auction.sellerId === currentUserId;
-  const bidDisabled = ended || submitting || isSeller;
+  const isLoggedOut = !currentUserId;
+  const isSeller = Boolean(currentUserId && auction.sellerId === currentUserId);
+  const bidDisabled = ended || submitting || isLoggedOut || isSeller;
   const bids = getBidsForAuction(auction.id);
 
   async function handleBid() {
@@ -127,6 +128,9 @@ export default function AuctionDetailScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Placer une enchère</Text>
+        {isLoggedOut ? (
+          <Text style={styles.ownerText}>Connectez-vous pour placer une enchère.</Text>
+        ) : null}
         {isSeller ? (
           <Text style={styles.ownerText}>Vous ne pouvez pas enchérir sur votre propre vente.</Text>
         ) : null}
@@ -150,11 +154,13 @@ export default function AuctionDetailScreen() {
           <Text style={styles.buttonText}>
             {ended
               ? "Enchère terminée"
-              : isSeller
-                ? "Votre vente"
-                : submitting
-                  ? "Enregistrement..."
-                  : "Enchérir"}
+              : isLoggedOut
+                ? "Connexion requise"
+                : isSeller
+                  ? "Votre vente"
+                  : submitting
+                    ? "Enregistrement..."
+                    : "Enchérir"}
           </Text>
         </Pressable>
 

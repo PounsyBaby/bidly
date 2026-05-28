@@ -44,27 +44,21 @@ function mapAuctionItem(row: AuctionItemRow): AuctionItem {
 
 export async function getAuctionItems() {
   if (!supabase) {
-    return [];
+    throw new Error("Configuration Supabase manquante.");
   }
 
-  try {
-    const { data, error } = await supabase
-      .from("auction_items")
-      .select(
-        "id,title,description,image_url,starting_price,current_price,highest_bidder_id,seller_id,seller_name,ends_at,status"
-      )
-      .order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("auction_items")
+    .select(
+      "id,title,description,image_url,starting_price,current_price,highest_bidder_id,seller_id,seller_name,ends_at,status",
+    )
+    .order("created_at", { ascending: false });
 
-    if (error) {
-      console.warn("Failed to load auctions:", error.message);
-      return [];
-    }
-
-    return (data ?? []).map((row) => mapAuctionItem(row as AuctionItemRow));
-  } catch (error) {
-    console.warn("Error loading auctions:", error);
-    return [];
+  if (error) {
+    throw new Error(error.message);
   }
+
+  return (data ?? []).map((row) => mapAuctionItem(row as AuctionItemRow));
 }
 
 export async function createAuctionItem(input: CreateAuctionItemInput) {
@@ -95,8 +89,9 @@ export async function deleteAuctionItem(auctionItemId: string) {
   }
 
   // Vérifier que l'utilisateur est authentifié
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+
   if (sessionError || !sessionData.session?.user?.id) {
     throw new Error("Vous devez être connecté pour supprimer une enchère.");
   }
@@ -124,6 +119,7 @@ export async function deleteAuctionItem(auctionItemId: string) {
     .from("auction_items")
     .delete()
     .eq("id", auctionItemId)
+    .eq("seller_id", userId)
     .select("id")
     .maybeSingle();
 
@@ -133,7 +129,7 @@ export async function deleteAuctionItem(auctionItemId: string) {
 
   if (!data) {
     throw new Error(
-      "Suppression refusée. Vérifiez que vous êtes le vendeur et que le schema SQL a été relancé."
+      "Suppression refusée. Vérifiez que vous êtes le vendeur et que le schema SQL a été relancé.",
     );
   }
 }
