@@ -108,6 +108,12 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=
 
 Ne jamais mettre de service role key dans l'application Expo.
 
+## .env
+
+Donnée du .env pour connecter supabase : voir dans le mail de remise
+
+OU
+
 ## Preparation Supabase
 
 Les fichiers SQL sont dans le dossier `supabase/`.
